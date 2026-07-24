@@ -1,0 +1,14 @@
+.posts {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.post-card form {
+  display: flex;
+  gap: 8px;
+
+  input {
+    flex: 1;
+  }
+}

@@ -1,0 +1,59 @@
+<button
+  class="chat-fab"
+  type="button"
+  [class.open]="open()"
+  [attr.aria-expanded]="open()"
+  aria-controls="lefobot-dialog"
+  title="Abrir asistente IA"
+  (click)="toggle()"
+>
+  <span class="chat-fab-icon" aria-hidden="true">✦</span>
+  <span class="chat-fab-text">
+    <strong>LeFoBot</strong>
+    <small>Asistente IA</small>
+  </span>
+</button>
+
+@if (open()) {
+  <section
+    id="lefobot-dialog"
+    class="chat-panel open"
+    role="dialog"
+    aria-modal="false"
+    aria-labelledby="chat-title"
+  >
+    <header class="chat-header">
+      <div>
+        <strong id="chat-title">LeFoBot ✦</strong>
+        <small>Asistente educativo con OpenAI</small>
+      </div>
+      <button class="chat-close" type="button" aria-label="Cerrar LeFoBot" (click)="close()">✕</button>
+    </header>
+
+    <div class="chat-messages" aria-live="polite">
+      @for (message of messages(); track $index) {
+        <p class="msg" [class.user]="message.role === 'user'" [class.ai]="message.role === 'assistant'">
+          {{ message.content }}
+        </p>
+      }
+      @if (thinking()) {
+        <p class="msg thinking">LeFoBot está escribiendo…</p>
+      }
+    </div>
+
+    <form class="chat-input-area" (ngSubmit)="send()">
+      <label class="sr-only" for="chat-input">Pregunta para LeFoBot</label>
+      <input
+        #chatInput
+        id="chat-input"
+        name="chatInput"
+        maxlength="400"
+        autocomplete="off"
+        placeholder="Escribe tu pregunta…"
+        [(ngModel)]="draft"
+      />
+      <button class="chat-send" type="submit" [disabled]="thinking()" aria-label="Enviar mensaje">➤</button>
+    </form>
+    <small class="chat-privacy">No compartas información personal. El contenido se procesa con OpenAI.</small>
+  </section>
+}

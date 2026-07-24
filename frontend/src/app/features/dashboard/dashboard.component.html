@@ -1,0 +1,151 @@
+<div class="legacy-wrap">
+  <header class="appbar" role="banner">
+    <a class="logo" routerLink="/activities" aria-label="LeFodigital, ir al inicio">
+      <span class="logo-mark" aria-hidden="true">L</span>
+      <span>
+        <span class="app-title">LeFodigital</span>
+        <span class="slogan">La educación que evoluciona contigo</span>
+      </span>
+    </a>
+    <nav class="top-actions" aria-label="Acciones de usuario">
+      <div class="a11y-controls" aria-label="Herramientas de accesibilidad">
+        <button class="btn ghost sm contrast-control" type="button" (click)="toggleContrast()">
+          ⊙ Contraste
+        </button>
+        <button class="btn ghost sm" type="button" title="Aumentar texto" (click)="adjustFont(1)">
+          A+
+        </button>
+        <button class="btn ghost sm" type="button" title="Disminuir texto" (click)="adjustFont(-1)">
+          A−
+        </button>
+      </div>
+      <div class="current-user">
+        <strong>{{ auth.user()?.name }}</strong>
+        <span>{{ auth.isTeacher() ? 'profesor' : 'estudiante' }}</span>
+      </div>
+      <a class="btn ghost sm" routerLink="/profile">Perfil</a>
+      <button class="btn sm" type="button" (click)="logout()">Salir</button>
+    </nav>
+  </header>
+
+  <main class="dashboard-main">
+    <div class="dashboard-grid">
+      <div class="dashboard-primary">
+        <section class="card overview-card">
+          <div class="dash-header">
+            <div>
+              <h1>Hola, {{ auth.isTeacher() ? 'Profesor' : auth.user()?.name?.split(' ')?.[0] }}</h1>
+              <p class="muted">
+                {{
+                  auth.isTeacher()
+                    ? 'Gestiona tus cursos y actividades'
+                    : 'Continúa fortaleciendo tus competencias digitales'
+                }}
+              </p>
+            </div>
+            <span class="role-pill">{{ auth.isTeacher() ? '👨‍🏫 Profesor' : '🎓 Estudiante' }}</span>
+          </div>
+
+          <div class="mission-badges" aria-label="Principios de LeFodigital">
+            <span>📖 Aprender es crecer</span>
+            <span>🚀 La educación que evoluciona contigo</span>
+            <span>🎯 Tu crecimiento, nuestra misión</span>
+          </div>
+
+          <p class="kicker modules-title">Módulos disponibles</p>
+          <nav class="modules-grid" aria-label="Módulos de LeFodigital">
+            @for (module of modules; track module.path) {
+              <a
+                class="module"
+                [class.full-width]="module.path === '/reports'"
+                [routerLink]="module.path"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <span class="module-icon" [class]="module.tone" aria-hidden="true">{{ module.icon }}</span>
+                <span>
+                  <strong>{{ module.label }}</strong>
+                  <small>{{ module.description }}</small>
+                </span>
+              </a>
+            }
+          </nav>
+        </section>
+
+        <section class="content-area">
+          <router-outlet />
+        </section>
+      </div>
+
+      <aside class="sidebar" aria-label="Resumen de perfil">
+        <section class="card profile-card">
+          <div class="profile-summary">
+            <div class="avatar">{{ auth.user()?.name?.charAt(0)?.toUpperCase() }}</div>
+            <div>
+              <strong>{{ auth.user()?.name }}</strong>
+              <small>{{ auth.isTeacher() ? '👨‍🏫 Profesor' : '🎓 Estudiante' }}</small>
+            </div>
+          </div>
+
+          @if (gamification.progress(); as progress) {
+            <div class="stats-pair">
+              <div><strong>{{ progress.points }}</strong><small>Puntos</small></div>
+              <div><strong>{{ progress.level }}</strong><small>Nivel</small></div>
+            </div>
+            <div class="progress-heading">
+              <span>Progreso al siguiente nivel</span>
+              <span>{{ progress.pointsInLevel }}/100 pts</span>
+            </div>
+            <div class="progress-bar"><i [style.width.%]="progress.pointsInLevel"></i></div>
+            <div class="divider"></div>
+            <p class="kicker">Mis medallas</p>
+            <div class="medals-row">
+              @if (progress.medals.length === 0) {
+                <p class="muted small-text">Aún sin medallas — ¡Completa actividades!</p>
+              }
+              @for (medal of progress.medals.slice(0, 6); track medal.key) {
+                <span class="medal" [title]="medal.name">{{ medal.icon }}</span>
+              }
+            </div>
+          }
+          <div class="profile-actions">
+            <a class="btn sm" routerLink="/profile">Ver perfil</a>
+            <button class="btn ghost sm" type="button" (click)="logout()">Cerrar sesión</button>
+          </div>
+        </section>
+
+        <section class="card news-card">
+          <p class="kicker">Novedades</p>
+          <div class="news-list">
+            <p>👋 Bienvenido a LeFodigital</p>
+            <p>✅ Completa actividades y gana puntos</p>
+            <p>🤖 ¡Prueba LeFoBot con ChatGPT en la esquina!</p>
+          </div>
+        </section>
+
+        @if (auth.isTeacher()) {
+          <section class="card teacher-actions">
+            <p class="kicker">Panel Profesor</p>
+            <a class="btn wide" routerLink="/activities" [queryParams]="{ create: 1 }">
+              + Crear actividad
+            </a>
+            <a class="btn ghost wide" routerLink="/courses" [queryParams]="{ create: 1 }">
+              + Crear curso
+            </a>
+          </section>
+        }
+      </aside>
+    </div>
+  </main>
+</div>
+
+<footer class="sitefoot" role="contentinfo">
+  <div class="footer-inner">
+    <div>LeFodigital © 2026 — Aprender es crecer · admin&#64;lefodigital.demo</div>
+    <nav aria-label="Enlaces del pie">
+      <a href="#privacy">Privacidad</a>
+      <a href="#twitter">Twitter</a>
+      <a href="#facebook">Facebook</a>
+    </nav>
+  </div>
+</footer>

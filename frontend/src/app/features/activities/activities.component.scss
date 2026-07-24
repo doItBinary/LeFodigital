@@ -1,0 +1,46 @@
+.activity-item {
+  align-items: stretch;
+}
+
+.item-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.evidence-box,
+.evidence-list {
+  width: 100%;
+}
+
+.feature-heading {
+  margin-bottom: 10px;
+}
+
+.feature-heading h2 {
+  margin: 0;
+  color: #0f1b2d;
+  font-size: 16px;
+}
+
+.empty-state {
+  display: block;
+  min-height: 0;
+  padding: 0;
+  justify-items: normal;
+  text-align: left;
+}
+
+.empty-state p {
+  width: 100%;
+  font-size: 13px;
+}
+
+.responsive-create {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .responsive-create {
+    display: inline-flex;
+  }
+}

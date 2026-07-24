@@ -1,0 +1,144 @@
+<article class="feature-card">
+  <div class="feature-heading">
+    <div>
+      <h2>Actividades</h2>
+    </div>
+    @if (auth.isTeacher()) {
+      <button class="btn responsive-create" type="button" (click)="showCreate.set(!showCreate())">
+        + Crear actividad
+      </button>
+    }
+  </div>
+
+  @if (showCreate() && auth.isTeacher()) {
+    <form class="form-panel" [formGroup]="form" (ngSubmit)="create()">
+      <h3>Nueva actividad</h3>
+      <div class="form-grid">
+        <label>
+          <span>Título</span>
+          <input formControlName="title" />
+        </label>
+        <label>
+          <span>Puntos</span>
+          <input type="number" min="1" formControlName="points" />
+        </label>
+        <label class="full">
+          <span>Descripción</span>
+          <textarea rows="3" formControlName="description"></textarea>
+        </label>
+        <label>
+          <span>Fecha límite</span>
+          <input type="date" formControlName="dueDate" />
+        </label>
+        <label>
+          <span>Curso opcional</span>
+          <select formControlName="courseId">
+            <option value="">Sin curso</option>
+            @for (course of courses(); track course.id) {
+              <option [value]="course.id">{{ course.name }}</option>
+            }
+          </select>
+        </label>
+      </div>
+      <div class="button-row">
+        <button class="btn" type="submit">Guardar borrador</button>
+        <button class="btn ghost" type="button" (click)="showCreate.set(false)">Cancelar</button>
+      </div>
+    </form>
+  }
+
+  <div class="item-list" [attr.aria-busy]="busy()">
+    @if (!busy() && activities().length === 0) {
+      <div class="empty-state">
+        <p>
+          {{
+            auth.isTeacher()
+              ? 'No hay actividades creadas aún. Usa el panel lateral para crear una.'
+              : 'Tu profesor aún no ha asignado actividades.'
+          }}
+        </p>
+      </div>
+    }
+
+    @for (activity of activities(); track activity.id) {
+      <article class="list-item activity-item">
+        <div class="item-main">
+          <div class="title-row">
+            <h3>{{ activity.title }}</h3>
+            @if (auth.isTeacher()) {
+              <span class="status" [class.published]="activity.status === 'published'">
+                {{ activity.status === 'published' ? 'Asignada' : 'Borrador' }}
+              </span>
+            } @else if (activity.completed) {
+              <span class="completed">✅ Completada</span>
+            }
+          </div>
+          <p>{{ activity.description || 'Sin descripción.' }}</p>
+          <div class="meta-row">
+            <span>🎯 {{ activity.points }} puntos</span>
+            @if (activity.dueDate) { <span>📅 Vence: {{ activity.dueDate | date: 'dd/MM/yyyy' }}</span> }
+            @if (activity.courseName) { <span>📚 {{ activity.courseName }}</span> }
+            @if (auth.isTeacher()) {
+              <span>✅ {{ activity.completionCount }}</span>
+              <span>📎 {{ activity.evidenceCount }}</span>
+            }
+          </div>
+        </div>
+
+        <div class="button-row">
+          @if (auth.isTeacher()) {
+            @if (activity.status === 'draft') {
+              <button class="btn sm ghost" type="button" (click)="publish(activity)">Asignar</button>
+            }
+            <button class="btn sm ghost" type="button" (click)="toggleEvidences(activity.id)">
+              {{ evidenceByActivity()[activity.id] ? 'Ocultar' : 'Ver evidencias' }}
+            </button>
+            <button class="btn sm danger" type="button" (click)="remove(activity)">Eliminar</button>
+          } @else if (!activity.completed) {
+            <button class="btn sm" type="button" (click)="complete(activity)">Completar</button>
+          }
+        </div>
+
+        @if (!auth.isTeacher()) {
+          <div class="evidence-box">
+            <strong>📎 Evidencia</strong>
+            @if (activity.myEvidence; as evidence) {
+              <button class="evidence-link" type="button" (click)="download(evidence)">
+                Descargar {{ evidence.originalName }}
+              </button>
+            } @else {
+              <label class="file-label" [for]="'file-' + activity.id">Seleccionar archivo</label>
+              <input
+                class="sr-only"
+                type="file"
+                [id]="'file-' + activity.id"
+                accept="image/*,.pdf,.doc,.docx"
+                (change)="selectFile(activity.id, $event)"
+              />
+              <span class="muted small-text">
+                {{ selectedFiles.get(activity.id)?.name || 'Sin archivo seleccionado' }}
+              </span>
+              @if (selectedFiles.has(activity.id)) {
+                <button class="btn sm" type="button" (click)="upload(activity.id)">Guardar evidencia</button>
+              }
+            }
+          </div>
+        }
+
+        @if (evidenceByActivity()[activity.id]; as evidences) {
+          <div class="evidence-list">
+            <strong>Evidencias subidas</strong>
+            @if (evidences.length === 0) { <p class="muted">No hay evidencias para esta actividad.</p> }
+            @for (evidence of evidences; track evidence.id) {
+              <div>
+                <span>👤 {{ evidence.studentName }}</span>
+                <span class="muted">{{ evidence.originalName }}</span>
+                <button class="evidence-link" type="button" (click)="download(evidence)">Descargar</button>
+              </div>
+            }
+          </div>
+        }
+      </article>
+    }
+  </div>
+</article>

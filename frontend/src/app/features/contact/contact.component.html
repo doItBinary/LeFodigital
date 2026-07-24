@@ -1,0 +1,23 @@
+<article class="feature-card">
+  <div class="about-grid">
+    <section>
+      <p class="kicker">Nuestro propósito</p>
+      <h2>Sobre LeFodigital</h2>
+      <p>
+        LeFodigital fortalece competencias digitales básicas mediante experiencias
+        prácticas, accesibles y contextualizadas para comunidades educativas rurales.
+      </p>
+      <div class="value-list">
+        <div><span>🌱</span><strong>Aprendizaje cercano</strong><p>Contenidos útiles para la vida cotidiana.</p></div>
+        <div><span>🤝</span><strong>Comunidad</strong><p>Profesores y estudiantes construyen juntos.</p></div>
+        <div><span>♿</span><strong>Accesibilidad</strong><p>Diseño adaptable y fácil de navegar.</p></div>
+      </div>
+    </section>
+    <form class="form-panel" [formGroup]="form" (ngSubmit)="send()">
+      <h3>Contáctanos</h3>
+      <label><span>Asunto</span><input formControlName="subject" /></label>
+      <label><span>Mensaje</span><textarea rows="5" formControlName="message"></textarea></label>
+      <button class="btn" type="submit">Enviar mensaje</button>
+    </form>
+  </div>
+</article>

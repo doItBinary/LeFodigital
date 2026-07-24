@@ -1,0 +1,131 @@
+<div class="legacy-wrap">
+  <header class="appbar" role="banner">
+    <div class="logo">
+      <span class="logo-mark" aria-hidden="true">L</span>
+      <div>
+        <div class="app-title">LeFodigital</div>
+        <div class="slogan">La educación que evoluciona contigo</div>
+      </div>
+    </div>
+    <nav class="top-actions" aria-label="Acciones principales">
+      <div class="a11y-controls" aria-label="Herramientas de accesibilidad">
+        <button class="btn ghost sm contrast-control" type="button" (click)="toggleContrast()">
+          ⊙ Contraste
+        </button>
+        <button class="btn ghost sm" type="button" title="Aumentar texto" (click)="adjustFont(1)">
+          A+
+        </button>
+        <button class="btn ghost sm" type="button" title="Disminuir texto" (click)="adjustFont(-1)">
+          A−
+        </button>
+      </div>
+      <a class="btn" href="#login-email">Entrar</a>
+    </nav>
+  </header>
+
+  <main class="auth-main">
+    <section class="card auth-shell" aria-live="polite">
+      <div class="auth-grid">
+        <div class="hero">
+          <p class="platform-label">Plataforma Educativa</p>
+          <h1>Bienvenido a LeFodigital</h1>
+          <p>Regístrate o inicia sesión para acceder a cursos, actividades, simulaciones y más.</p>
+          <p class="kicker demo-title">Cuentas de demostración</p>
+          <div class="demo-creds" aria-label="Credenciales de demostración">
+            <button type="button" class="cred-item" (click)="useDemo('teacher')">
+              <span class="cred-badge">Profesor</span>
+              <span>prof&#64;demo.com&nbsp; / &nbsp;prof123</span>
+            </button>
+            <button type="button" class="cred-item" (click)="useDemo('student')">
+              <span class="cred-badge student">Estudiante</span>
+              <span>est&#64;demo.com&nbsp; / &nbsp;est123</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card form-card">
+          @if (!registering()) {
+            <form [formGroup]="loginForm" (ngSubmit)="login()" aria-labelledby="auth-title">
+              <h2 id="auth-title">Iniciar sesión</h2>
+              <label for="login-email">Correo electrónico</label>
+              <input
+                id="login-email"
+                type="email"
+                autocomplete="email"
+                placeholder="tu@correo.com"
+                formControlName="email"
+              />
+              <label for="login-password">Contraseña</label>
+              <input
+                id="login-password"
+                type="password"
+                autocomplete="current-password"
+                placeholder="••••••••"
+                formControlName="password"
+              />
+              <div class="form-row">
+                <button class="btn" type="submit" [disabled]="busy()">
+                  {{ busy() ? 'Ingresando…' : 'Entrar →' }}
+                </button>
+                <button class="btn ghost" type="button" (click)="registering.set(true)">
+                  Crear cuenta
+                </button>
+              </div>
+            </form>
+          } @else {
+            <form [formGroup]="registerForm" (ngSubmit)="register()" aria-labelledby="auth-title">
+              <h2 id="auth-title">Crear cuenta</h2>
+              <label for="register-name">Nombre completo</label>
+              <input id="register-name" autocomplete="name" placeholder="Tu nombre" formControlName="name" />
+              <label for="register-email">Correo electrónico</label>
+              <input
+                id="register-email"
+                type="email"
+                autocomplete="email"
+                placeholder="tu@correo.com"
+                formControlName="email"
+              />
+              <label for="register-password">Contraseña</label>
+              <input
+                id="register-password"
+                type="password"
+                autocomplete="new-password"
+                placeholder="Elige una contraseña"
+                formControlName="password"
+              />
+              <label for="register-role">Rol</label>
+              <select id="register-role" formControlName="role">
+                <option value="student">Estudiante</option>
+                <option value="teacher">Profesor</option>
+              </select>
+              @if (registerForm.controls.role.value === 'teacher') {
+                <label for="teacher-code">Código de invitación docente</label>
+                <input id="teacher-code" type="password" formControlName="teacherInvitationCode" />
+              }
+              <div class="form-row">
+                <button class="btn" type="submit" [disabled]="busy()">
+                  {{ busy() ? 'Creando…' : 'Registrarme' }}
+                </button>
+                <button class="btn ghost" type="button" (click)="registering.set(false)">
+                  Ya tengo cuenta
+                </button>
+              </div>
+              <p class="small-text muted">Al registrarte aceptas los términos de uso (prototipo demo).</p>
+            </form>
+          }
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="sitefoot" role="contentinfo">
+  <div class="footer-inner">
+    <div>LeFodigital © 2026 — Aprender es crecer · admin&#64;lefodigital.demo</div>
+    <nav aria-label="Enlaces del pie">
+      <a href="#privacy">Privacidad</a>
+      <a href="#twitter">Twitter</a>
+      <a href="#facebook">Facebook</a>
+    </nav>
+  </div>
+</footer>

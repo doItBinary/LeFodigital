@@ -1,0 +1,11 @@
+<article class="feature-card narrow-card">
+  <p class="kicker">Tu información</p>
+  <h2>Perfil</h2>
+  <p class="muted">Mantén actualizados tus datos visibles en la plataforma.</p>
+  <form class="form-panel plain" [formGroup]="form" (ngSubmit)="save()">
+    <label><span>Nombre completo</span><input autocomplete="name" formControlName="name" /></label>
+    <label><span>Correo electrónico</span><input type="email" formControlName="email" /></label>
+    <label><span>Institución educativa</span><input formControlName="institution" /></label>
+    <button class="btn" type="submit">Guardar cambios</button>
+  </form>
+</article>

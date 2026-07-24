@@ -1,0 +1,46 @@
+<article class="feature-card">
+  <div class="feature-heading">
+    <div>
+      <p class="kicker">Rutas de aprendizaje</p>
+      <h2>Cursos disponibles</h2>
+      <p class="muted">Explora contenidos creados por tus profesores.</p>
+    </div>
+    @if (auth.isTeacher()) {
+      <button class="btn" type="button" (click)="showCreate.set(!showCreate())">+ Crear curso</button>
+    }
+  </div>
+
+  @if (showCreate() && auth.isTeacher()) {
+    <form class="form-panel" [formGroup]="form" (ngSubmit)="create()">
+      <h3>Nuevo curso</h3>
+      <label>
+        <span>Nombre</span>
+        <input formControlName="name" />
+      </label>
+      <label>
+        <span>Descripción</span>
+        <textarea rows="3" formControlName="description"></textarea>
+      </label>
+      <div class="button-row">
+        <button class="btn" type="submit">Guardar curso</button>
+        <button class="btn ghost" type="button" (click)="showCreate.set(false)">Cancelar</button>
+      </div>
+    </form>
+  }
+
+  <div class="course-grid">
+    @if (courses().length === 0) {
+      <div class="empty-state"><span>📚</span><strong>No hay cursos creados aún.</strong></div>
+    }
+    @for (course of courses(); track course.id) {
+      <article class="course-card">
+        <span class="course-icon">📘</span>
+        <div>
+          <h3>{{ course.name }}</h3>
+          <p>{{ course.description || 'Curso educativo de LeFodigital.' }}</p>
+          <small>Instructor: {{ course.ownerName }}</small>
+        </div>
+      </article>
+    }
+  </div>
+</article>

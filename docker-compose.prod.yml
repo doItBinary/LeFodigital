@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    environment:
+      APP_ENV: prod
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required}
+      TEACHER_INVITATION_CODE: ${TEACHER_INVITATION_CODE:?TEACHER_INVITATION_CODE is required}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5.6-luna}
+      EVIDENCE_STORAGE_PATH: /app/data/evidence
+      MAX_UPLOAD_BYTES: ${MAX_UPLOAD_BYTES:-1048576}
+      CHAT_RATE_LIMIT_PER_MINUTE: ${CHAT_RATE_LIMIT_PER_MINUTE:-10}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      SEED_DEMO_DATA: "true"
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-*}
+    volumes:
+      - ${EVIDENCE_HOST_PATH:?EVIDENCE_HOST_PATH is required}:/app/data/evidence
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    restart: unless-stopped

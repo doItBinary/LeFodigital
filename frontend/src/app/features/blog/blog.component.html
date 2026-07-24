@@ -1,0 +1,44 @@
+<article class="feature-card">
+  <div class="feature-heading">
+    <div>
+      <p class="kicker">Comunidad LeFodigital</p>
+      <h2>Blog educativo</h2>
+      <p class="muted">Comparte aprendizajes, preguntas e ideas con la comunidad.</p>
+    </div>
+  </div>
+
+  <form class="form-panel" [formGroup]="form" (ngSubmit)="create()">
+    <h3>Nueva publicación</h3>
+    <label><span>Título</span><input formControlName="title" /></label>
+    <label><span>Contenido</span><textarea rows="4" formControlName="content"></textarea></label>
+    <button class="btn" type="submit">Publicar</button>
+  </form>
+
+  <div class="posts">
+    @if (posts().length === 0) {
+      <div class="empty-state"><span>✍️</span><strong>Sé la primera persona en publicar.</strong></div>
+    }
+    @for (post of posts(); track post.id) {
+      <article class="post-card">
+        <h3>{{ post.title }}</h3>
+        <small>✍️ {{ post.authorName }} · {{ post.createdAt | date: 'medium' }}</small>
+        <p>{{ post.content }}</p>
+        <div class="comments">
+          @for (comment of post.comments; track comment.id) {
+            <div><strong>{{ comment.authorName }}</strong><span>{{ comment.content }}</span></div>
+          }
+        </div>
+        <form (ngSubmit)="comment(post.id)">
+          <label class="sr-only" [for]="'comment-' + post.id">Comentar publicación</label>
+          <input
+            [id]="'comment-' + post.id"
+            name="comment"
+            placeholder="Escribe un comentario…"
+            [(ngModel)]="comments[post.id]"
+          />
+          <button class="btn sm" type="submit">Comentar</button>
+        </form>
+      </article>
+    }
+  </div>
+</article>

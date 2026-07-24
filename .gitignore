@@ -1,0 +1,29 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+backend/.venv/
+backend/**/__pycache__/
+backend/**/*.py[cod]
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+backend/data/
+backend/*.db
+
+# Angular
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/.angular/
+
+# Editors and operating systems
+.idea/
+.DS_Store
+Thumbs.db
+
+# Runtime evidence
+data/
+evidence/

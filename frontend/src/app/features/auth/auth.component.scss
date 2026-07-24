@@ -1,0 +1,276 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.legacy-wrap {
+  width: min(1140px, calc(100% - 36px));
+  margin: 0 auto;
+  padding-top: 20px;
+}
+
+.appbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border: 1px solid rgb(255 255 255 / 90%);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 85%);
+  box-shadow: 0 2px 16px rgb(18 35 57 / 7%);
+  backdrop-filter: blur(12px);
+}
+
+.logo,
+.top-actions,
+.a11y-controls {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  gap: 11px;
+}
+
+.logo-mark {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #3a6b9e, #1e3f60);
+  box-shadow: 0 3px 10px rgb(47 90 134 / 35%);
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.app-title {
+  color: #0f1b2d;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.slogan {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.top-actions {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.a11y-controls {
+  gap: 6px;
+}
+
+.auth-main {
+  margin-top: 10px;
+}
+
+.card {
+  border: 1px solid rgb(18 35 57 / 4%);
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 4px 20px rgb(18 35 57 / 8%);
+}
+
+.auth-shell {
+  padding: 20px;
+}
+
+.auth-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 20px;
+  align-items: center;
+}
+
+.hero {
+  padding: 10px 20px;
+}
+
+.platform-label {
+  margin-bottom: 8px;
+  color: var(--primary-2);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  margin-bottom: 8px;
+  color: #0f1b2d;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.hero > p:not(.platform-label, .demo-title) {
+  color: var(--muted);
+}
+
+.demo-title {
+  margin-top: 16px;
+}
+
+.demo-creds {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.cred-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid rgb(47 90 134 / 8%);
+  border-radius: 10px;
+  background: #f7faff;
+  color: #0f1b2d;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: left;
+}
+
+.cred-item:hover {
+  border-color: rgb(47 90 134 / 20%);
+  background: #f1f6fd;
+}
+
+.cred-badge {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--primary-2);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cred-badge.student {
+  background: #1e8a5e;
+}
+
+.form-card {
+  padding: 22px;
+}
+
+form {
+  display: grid;
+  gap: 10px;
+}
+
+form h2 {
+  margin-bottom: 6px;
+  color: #0f1b2d;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+label {
+  margin-bottom: -4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+input,
+select {
+  padding: 10px 12px;
+  border: 1.5px solid #e0e8f0;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 14px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sitefoot {
+  position: fixed;
+  z-index: 100;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  padding: 10px 20px;
+  border-top: 1px solid rgb(18 35 57 / 5%);
+  background: rgb(255 255 255 / 90%);
+  backdrop-filter: blur(10px);
+}
+
+.footer-inner {
+  display: flex;
+  width: min(1140px, 100%);
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.footer-inner nav {
+  display: flex;
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .auth-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .legacy-wrap {
+    width: min(100% - 24px, 1140px);
+    padding-top: 12px;
+  }
+
+  .appbar {
+    align-items: flex-start;
+    padding: 9px 11px;
+  }
+
+  .slogan,
+  .contrast-control {
+    display: none;
+  }
+
+  .auth-shell {
+    padding: 14px;
+  }
+
+  .hero {
+    padding: 8px 4px 12px;
+  }
+
+  .form-card {
+    padding: 18px 14px;
+  }
+
+  .form-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .footer-inner {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .footer-inner nav {
+    display: none;
+  }
+}

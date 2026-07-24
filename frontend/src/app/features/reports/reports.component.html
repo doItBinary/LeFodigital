@@ -1,0 +1,71 @@
+<article class="feature-card">
+  <div class="feature-heading">
+    <div>
+      <p class="kicker">Resultados persistentes</p>
+      <h2>{{ auth.isTeacher() ? 'Reporte general' : 'Mi progreso' }}</h2>
+      <p class="muted">Consulta y descarga la información registrada en la plataforma.</p>
+    </div>
+    <div class="button-row">
+      <button class="btn sm pdf" type="button" (click)="exportPdf()">📄 Descargar PDF</button>
+      <button class="btn sm excel" type="button" (click)="exportExcel()">📊 Descargar Excel</button>
+    </div>
+  </div>
+
+  @if (studentReport(); as report) {
+    <div class="report-stats">
+      <div><strong>{{ report.progress.points }}</strong><span>Puntos totales</span></div>
+      <div><strong>{{ report.progress.level }}</strong><span>Nivel actual</span></div>
+      <div><strong>{{ report.progress.completedActivities }}</strong><span>Completadas</span></div>
+      <div><strong>{{ report.progress.medals.length }}</strong><span>Medallas</span></div>
+    </div>
+    <div class="report-progress">
+      <span>{{ report.progress.pointsInLevel }}/100 pts para el siguiente nivel</span>
+      <div class="progress-bar"><i [style.width.%]="report.progress.pointsInLevel"></i></div>
+    </div>
+    <h3>Medallas obtenidas</h3>
+    <div class="medal-cards">
+      @for (medal of report.progress.medals; track medal.key) {
+        <div><span>{{ medal.icon }}</span><strong>{{ medal.name }}</strong><small>{{ medal.description }}</small></div>
+      } @empty {
+        <p class="muted">Aún no has obtenido medallas.</p>
+      }
+    </div>
+    <h3>Actividades completadas</h3>
+    <div class="item-list">
+      @for (activity of report.completed; track activity.id) {
+        <div class="list-item">
+          <div><strong>{{ activity.title }}</strong><p>{{ activity.description }}</p></div>
+          <span class="completed">+{{ activity.points }} pts</span>
+        </div>
+      } @empty {
+        <p class="muted">Aún no has completado actividades.</p>
+      }
+    </div>
+  }
+
+  @if (teacherReport(); as report) {
+    <div class="report-stats">
+      <div><strong>{{ report.totalStudents }}</strong><span>Estudiantes</span></div>
+      <div><strong>{{ report.averagePoints }}</strong><span>Promedio puntos</span></div>
+      <div><strong>{{ report.averageLevel }}</strong><span>Promedio nivel</span></div>
+      <div><strong>{{ report.totalMedals }}</strong><span>Medallas otorgadas</span></div>
+    </div>
+    <div class="student-reports">
+      @for (student of report.students; track student.studentId) {
+        <article>
+          <div class="title-row">
+            <div><h3>{{ student.name }}</h3><small>{{ student.email }} · {{ student.progress.points }} pts</small></div>
+            <strong>{{ student.progressPercent }}%</strong>
+          </div>
+          <div class="progress-bar"><i [style.width.%]="student.progressPercent"></i></div>
+          <p class="muted small-text">
+            {{ student.progress.completedActivities }}/{{ student.totalPublishedActivities }} actividades ·
+            {{ student.progress.medals.length }} medallas · {{ student.evidenceCount }} evidencias
+          </p>
+        </article>
+      } @empty {
+        <p class="muted">No hay estudiantes registrados.</p>
+      }
+    </div>
+  }
+</article>

@@ -1,0 +1,1 @@
+"""Community blog module."""
