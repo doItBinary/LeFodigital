@@ -252,6 +252,23 @@ con la configuración real de desarrollo, la suite completa, reconstrucción de
 imágenes, migración, semilla, estado saludable y respuestas HTTP de ambos
 servicios.
 
+El 26 de julio de 2026 se normalizó el nombre DNS interno del backend como
+`lefodigital-backend`. Nginx, el proxy Angular para Docker, los servicios de
+Docker Compose y el Service de Kubernetes usan desde entonces el mismo nombre.
+Los nombres del módulo, la carpeta `backend`, las etiquetas de componente y el
+campo estructural `backend` del recurso Ingress no se modifican.
+
+La primera ejecución en Kubernetes reveló dos fallos de contrato de imagen. El
+backend completaba Alembic, pero Uvicorn rechazaba `LOG_LEVEL=INFO`; el
+entrypoint ahora normaliza el nivel a minúsculas, valida los valores admitidos
+y la imagen crea explícitamente el usuario `10001:10001`. El frontend publicado
+todavía contenía el upstream histórico `backend:8000` y no podía arrancar. Su
+imagen ahora usa una configuración Nginx completa para ejecución no
+privilegiada como `101:101`, escucha en `8080`, escribe PID y temporales bajo
+`/tmp`, conserva el upstream `lefodigital-backend:8000` y funciona con raíz de
+solo lectura. CI construye ambas imágenes y prueba salud, proxy, UID/GID,
+filesystem de solo lectura y temporales antes de publicar.
+
 El 26 de julio de 2026 se actualizó la documentación principal para que el
 README funcione como guía académica y operativa de la solución activa. También
 se extendió GitHub Actions con una etapa de publicación de imágenes privadas en

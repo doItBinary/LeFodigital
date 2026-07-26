@@ -253,6 +253,8 @@ variables deben inyectarse desde el sistema de despliegue:
 - `CHAT_RATE_LIMIT_PER_MINUTE`, opcional.
 - `CORS_ORIGINS`, con el origen público autorizado.
 - `FORWARDED_ALLOW_IPS`, ajustado al proxy autorizado.
+- `LOG_LEVEL`, opcional; acepta los niveles de Uvicorn sin distinguir
+  mayúsculas y minúsculas.
 
 Ejemplo:
 
@@ -260,8 +262,9 @@ Ejemplo:
 docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-La aplicación pública queda expuesta por el contenedor frontend. Nginx sirve
-Angular y reenvía `/api` al backend dentro de la red privada de Compose.
+La aplicación pública queda expuesta por el contenedor frontend en el puerto
+interno `8080`. Nginx se ejecuta con UID/GID `101:101`, sirve Angular y reenvía
+`/api` a `lefodigital-backend:8000` dentro de la red privada de Compose.
 
 ## Copias de seguridad y actualización
 

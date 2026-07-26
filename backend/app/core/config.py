@@ -28,7 +28,7 @@ class Settings(BaseSettings):
         default_factory=lambda: ["http://localhost:4200"]
     )
     seed_demo_data: bool = True
-    log_level: str = "INFO"
+    log_level: str = "info"
 
     model_config = SettingsConfigDict(
         case_sensitive=False,

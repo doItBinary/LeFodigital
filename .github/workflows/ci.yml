@@ -75,13 +75,105 @@ jobs:
         run: |
           ! git grep -E '(sk-proj-|gsk_|BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY)' -- . ':!.github/workflows/ci.yml'
 
-  publish-images:
-    name: Publish private Docker images
+  container-images:
+    name: Validate production container contract
     runs-on: ubuntu-latest
     needs:
       - backend
       - frontend
       - repository-safety
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build production images
+        run: |
+          docker build --tag lefodigital-backend:ci backend
+          docker build --tag lefodigital-frontend:ci frontend
+      - name: Run images as Kubernetes runs them
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cleanup() {
+            docker rm --force lefodigital-frontend lefodigital-backend lefodigital-db >/dev/null 2>&1 || true
+            docker network rm lefodigital-smoke >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          docker network create lefodigital-smoke
+          docker run --detach \
+            --name lefodigital-db \
+            --network lefodigital-smoke \
+            --env POSTGRES_USER=lefodigital \
+            --env POSTGRES_PASSWORD=ci-password \
+            --env POSTGRES_DB=prj_grado_prod \
+            postgres:17-alpine
+
+          for attempt in {1..30}; do
+            if docker exec lefodigital-db pg_isready --username lefodigital --dbname prj_grado_prod; then
+              break
+            fi
+            if [ "$attempt" -eq 30 ]; then
+              docker logs lefodigital-db
+              exit 1
+            fi
+            sleep 2
+          done
+
+          docker run --detach \
+            --name lefodigital-backend \
+            --network lefodigital-smoke \
+            --network-alias lefodigital-backend \
+            --user 10001:10001 \
+            --read-only \
+            --tmpfs /tmp:rw,noexec,nosuid,size=32m,uid=10001,gid=10001,mode=1770 \
+            --tmpfs /app/data/evidence:rw,noexec,nosuid,size=16m,uid=10001,gid=10001,mode=0770 \
+            --env APP_ENV=prod \
+            --env DATABASE_URL=postgresql+psycopg://lefodigital:ci-password@lefodigital-db:5432/prj_grado_prod \
+            --env JWT_SECRET_KEY=ci-only-secret-with-more-than-thirty-two-characters \
+            --env TEACHER_INVITATION_CODE=CI-DOCENTE \
+            --env LOG_LEVEL=INFO \
+            lefodigital-backend:ci
+
+          for attempt in {1..60}; do
+            if docker exec lefodigital-backend python -c \
+              "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health/ready', timeout=3)"; then
+              break
+            fi
+            if [ "$(docker inspect --format '{{.State.Running}}' lefodigital-backend)" != "true" ] || [ "$attempt" -eq 60 ]; then
+              docker logs lefodigital-backend
+              exit 1
+            fi
+            sleep 2
+          done
+
+          docker run --detach \
+            --name lefodigital-frontend \
+            --network lefodigital-smoke \
+            --user 101:101 \
+            --read-only \
+            --tmpfs /tmp:rw,noexec,nosuid,size=32m,uid=101,gid=101,mode=1770 \
+            --publish 127.0.0.1:18080:8080 \
+            lefodigital-frontend:ci
+
+          for attempt in {1..30}; do
+            if curl --fail --silent --show-error http://127.0.0.1:18080/health; then
+              break
+            fi
+            if [ "$(docker inspect --format '{{.State.Running}}' lefodigital-frontend)" != "true" ] || [ "$attempt" -eq 30 ]; then
+              docker logs lefodigital-frontend
+              exit 1
+            fi
+            sleep 2
+          done
+
+          curl --fail --silent --show-error \
+            http://127.0.0.1:18080/api/v1/health/live
+
+  publish-images:
+    name: Publish private Docker images
+    runs-on: ubuntu-latest
+    needs:
+      - container-images
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     env:
       REGISTRY_IMAGE: ${{ vars.GITLAB_REGISTRY_IMAGE }}

@@ -6,8 +6,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-RUN addgroup --system lefodigital \
-    && adduser --system --ingroup lefodigital lefodigital
+RUN addgroup --system --gid 10001 lefodigital \
+    && adduser --system --uid 10001 --ingroup lefodigital --no-create-home lefodigital
 
 COPY pyproject.toml ./
 COPY app ./app

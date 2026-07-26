@@ -1,5 +1,5 @@
 services:
-  backend:
+  lefodigital-backend:
     build:
       context: ./backend
     env_file:
@@ -33,7 +33,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     depends_on:
-      backend:
+      lefodigital-backend:
         condition: service_healthy
     ports:
       - "4200:4200"
